@@ -180,17 +180,17 @@ end
 
 function AutoCarrot_OnLoad()
     if AutoCarrotDB.enabled then
-        AutoCarrotButton.overlay:SetColorTexture(0, 1, 0, 0.3)
+        autoSpeedButton.overlay:SetColorTexture(0, 1, 0, 0.3)
     else
-        AutoCarrotButton.overlay:SetColorTexture(1, 0, 0, 0.5)
+        autoSpeedButton.overlay:SetColorTexture(1, 0, 0, 0.5)
     end
     if AutoCarrotDB.button then 
-        AutoCarrotButton:Show() 
+        autoSpeedButton:Show() 
     else
-        AutoCarrotButton:Hide() 
+        autoSpeedButton:Hide() 
     end
     
-    AutoCarrotButton:SetScale(AutoCarrotDB.buttonScale or 1)
+    autoSpeedButton:SetScale(AutoCarrotDB.buttonScale or 1)
 end
 
 -- Slash handler
@@ -251,8 +251,8 @@ local function OnSlash(key, value, ...)
                 AutoCarrot_Print("'button' set: "..( enable and "true" or "false" ))
                 AutoCarrot_OnLoad()
             elseif value == "reset" then
-                AutoCarrotButton:ClearAllPoints()
-                AutoCarrotButton:SetPoint("CENTER")
+                autoSpeedButton:ClearAllPoints()
+                autoSpeedButton:SetPoint("CENTER")
                 AutoCarrotDB.buttonScale = 1
                 AutoCarrot_OnLoad()
                 AutoCarrot_Print("Button position/scale reset.")
@@ -293,23 +293,23 @@ SlashCmdList["AUTOCARROT"] = function(msg)
     end
 end
 
-AutoCarrotButton = CreateFrame("Button", "AutoCarrotButton", UIParent, "ActionButtonTemplate")
-AutoCarrotButton.icon:SetTexture(134010)
-AutoCarrotButton:SetPoint("CENTER")
-AutoCarrotButton.overlay = AutoCarrotButton:CreateTexture(nil, "OVERLAY")
-AutoCarrotButton.overlay:SetAllPoints(AutoCarrotButton)
-AutoCarrotButton:RegisterForDrag("LeftButton")
-AutoCarrotButton:SetMovable(true)
-AutoCarrotButton:SetUserPlaced(true)
-AutoCarrotButton:SetScript("OnDragStart", function() if IsAltKeyDown() then AutoCarrotButton:StartMoving() end end)
-AutoCarrotButton:SetScript("OnDragStop", AutoCarrotButton.StopMovingOrSizing)
-AutoCarrotButton:SetScript("OnClick", function()
+autoSpeedButton = CreateFrame("Button", "autoSpeedButton", UIParent, "ActionButtonTemplate")
+autoSpeedButton.icon:SetTexture(298590)
+autoSpeedButton:SetPoint("CENTER")
+autoSpeedButton.overlay = autoSpeedButton:CreateTexture(nil, "OVERLAY")
+autoSpeedButton.overlay:SetAllPoints(autoSpeedButton)
+autoSpeedButton:RegisterForDrag("LeftButton")
+autoSpeedButton:SetMovable(true)
+autoSpeedButton:SetUserPlaced(true)
+autoSpeedButton:SetScript("OnDragStart", function() if IsAltKeyDown() then autoSpeedButton:StartMoving() end end)
+autoSpeedButton:SetScript("OnDragStop", autoSpeedButton.StopMovingOrSizing)
+autoSpeedButton:SetScript("OnClick", function()
     if AutoCarrotDB.enabled then
-        AutoCarrotButton.overlay:SetColorTexture(1, 0, 0, 0.5)
+        autoSpeedButton.overlay:SetColorTexture(1, 0, 0, 0.5)
         AutoCarrotDB.enabled = false
         AutoCarrot_EquipNormalSet()
     else
-        AutoCarrotButton.overlay:SetColorTexture(0, 1, 0, 0.3)
+        autoSpeedButton.overlay:SetColorTexture(0, 1, 0, 0.3)
         AutoCarrotDB.enabled = true
     end
 end)
