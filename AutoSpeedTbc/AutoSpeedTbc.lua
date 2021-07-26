@@ -294,7 +294,7 @@ SlashCmdList["AUTOCARROT"] = function(msg)
 end
 
 autoSpeedButton = CreateFrame("Button", "autoSpeedButton", UIParent, "ActionButtonTemplate")
-autoSpeedButton.icon:SetTexture(298590)
+autoSpeedButton.icon:SetTexture(132536)
 autoSpeedButton:SetPoint("CENTER")
 autoSpeedButton.overlay = autoSpeedButton:CreateTexture(nil, "OVERLAY")
 autoSpeedButton.overlay:SetAllPoints(autoSpeedButton)
