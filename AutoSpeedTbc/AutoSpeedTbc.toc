@@ -1,8 +1,8 @@
 ## Interface: 11304
 ## Title: AutoSpeedTbc
 ## Author: kebabstorm, aquitainus
-## Notes: Equips Riding Crop (instead of Carrot On a Stick) automatically when mounted, Based on AutoCarrot
+## Notes: Equips Riding Crop or Carrot On a Stick automatically when mounted, Based on AutoCarrot
 ## SavedVariablesPerCharacter: AutoCarrotDB
-## Version: 2.5.1
+## Version: 2.5.4
 
 AutoSpeedTbc.lua

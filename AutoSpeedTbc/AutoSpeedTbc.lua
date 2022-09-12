@@ -7,17 +7,25 @@ f:RegisterEvent('PLAYER_LOGIN')
 f:RegisterEvent('BAG_UPDATE')
 f:RegisterEvent('ADDON_LOADED')
 f:SetScript("OnUpdate", function()
+
+    -- Checks if in combat, or dead, end function and do nothing
     if(not AutoCarrotDB.enabled or InCombatLockdown() or UnitIsDeadOrGhost("player")) then return end
+
+    -- Checks if mounted and not on a taxi.
     if(IsMounted() and not UnitOnTaxi("player")) then
+
+        -- First check on the trinket slot for riding crop or carrot on a stick
         local itemId = GetInventoryItemID("player", 13) -- trinket slot 1
-        if(itemId) then
-            if(itemId ~= 25653) then -- 25653 is 'Riding Crop', 11122 is "Carrot on a Stick"
+        if(itemId) then -- itemId is set to whatever is in slot 13 at call
+            if(itemId ~= 25653 and itemId ~= 11122) then -- 25653 is 'Riding Crop', testing if item isn't riding Crop nor carrot on a stick
                 AutoCarrotDB.trinketId = itemId
-                EquipItemByName(25653, 13)
+                EquipItemByName(11122, 13) -- initial equip of carrot on a stick trinket
+                EquipItemByName(25653, 13) -- override of carrot on a stick if riding crop exists in the bag
             end
         else
-            AutoCarrotDB.trinketId = nil
-            EquipItemByName(25653, 13)
+            AutoCarrotDB.trinketId = nil -- checking to see if there was nothing in the trinket slot 13 to begin with
+            EquipItemByName(11122, 13) -- initial equip of carrot on a stick trinket
+            EquipItemByName(25653, 13) -- 25653 is 'Riding Crop', override from 11122 as "Carrot on a Stick" if available
         end
         if(AutoCarrotDB.ridingGloves and AutoCarrotDB.enchantHandsLink) then
             itemLink = GetInventoryItemLink("player", 10) -- hands
@@ -48,7 +56,7 @@ f:SetScript("OnUpdate", function()
     else
         local itemId = GetInventoryItemID("player", 13) -- trinket
         if(itemId) then
-            if(itemId ~= 25653) then
+            if(itemId ~= 25653 and itemId ~= 11122) then
                 AutoCarrotDB.trinketId = itemId
             elseif(AutoCarrotDB.trinketId) then
                 EquipItemByName(AutoCarrotDB.trinketId, 13)
@@ -86,13 +94,13 @@ f:SetScript("OnUpdate", function()
     if(IsSwimming() and AutoCarrotDB.swimBelt) then
         local itemId = GetInventoryItemID("player", 6) -- waist
         if(itemId) then
-            if(itemId ~= 7052) then
+            if(itemId ~= 7052) then -- 7052 is the Azure Silk Swim Belt
                 AutoCarrotDB.beltId = itemId
-                EquipItemByName(7052, 6)
+                EquipItemByName(7052, 6) -- 7052 is the Azure Silk Swim Belt, 6 is waist position
             end
         else
             AutoCarrotDB.beltId = nil
-            EquipItemByName(7052, 6)
+            EquipItemByName(7052, 6) -- 7052 is the Azure Silk Swim Belt
         end
     else
         local itemId = GetInventoryItemID("player", 6) -- waist
@@ -154,8 +162,10 @@ f:SetScript('OnEvent', function(self, event, ...)
 end)
 
 function AutoCarrot_EquipNormalSet()
+    -- If in combat or dead, end function 
     if(InCombatLockdown() or UnitIsDeadOrGhost("player")) then return end
 
+    -- 
     if(AutoCarrotDB.trinketId) then
         EquipItemByName(AutoCarrotDB.trinketId, 13)
     end
@@ -180,17 +190,17 @@ end
 
 function AutoCarrot_OnLoad()
     if AutoCarrotDB.enabled then
-        AutoCarrotButton.overlay:SetColorTexture(0, 1, 0, 0.3)
+        autoSpeedButton.overlay:SetColorTexture(0, 1, 0, 0.3)
     else
-        AutoCarrotButton.overlay:SetColorTexture(1, 0, 0, 0.5)
+        autoSpeedButton.overlay:SetColorTexture(1, 0, 0, 0.5)
     end
     if AutoCarrotDB.button then 
-        AutoCarrotButton:Show() 
+        autoSpeedButton:Show() 
     else
-        AutoCarrotButton:Hide() 
+        autoSpeedButton:Hide() 
     end
     
-    AutoCarrotButton:SetScale(AutoCarrotDB.buttonScale or 1)
+    autoSpeedButton:SetScale(AutoCarrotDB.buttonScale or 1)
 end
 
 -- Slash handler
@@ -251,8 +261,8 @@ local function OnSlash(key, value, ...)
                 AutoCarrot_Print("'button' set: "..( enable and "true" or "false" ))
                 AutoCarrot_OnLoad()
             elseif value == "reset" then
-                AutoCarrotButton:ClearAllPoints()
-                AutoCarrotButton:SetPoint("CENTER")
+                autoSpeedButton:ClearAllPoints()
+                autoSpeedButton:SetPoint("CENTER")
                 AutoCarrotDB.buttonScale = 1
                 AutoCarrot_OnLoad()
                 AutoCarrot_Print("Button position/scale reset.")
@@ -293,23 +303,23 @@ SlashCmdList["AUTOCARROT"] = function(msg)
     end
 end
 
-AutoCarrotButton = CreateFrame("Button", "AutoCarrotButton", UIParent, "ActionButtonTemplate")
-AutoCarrotButton.icon:SetTexture(134010)
-AutoCarrotButton:SetPoint("CENTER")
-AutoCarrotButton.overlay = AutoCarrotButton:CreateTexture(nil, "OVERLAY")
-AutoCarrotButton.overlay:SetAllPoints(AutoCarrotButton)
-AutoCarrotButton:RegisterForDrag("LeftButton")
-AutoCarrotButton:SetMovable(true)
-AutoCarrotButton:SetUserPlaced(true)
-AutoCarrotButton:SetScript("OnDragStart", function() if IsAltKeyDown() then AutoCarrotButton:StartMoving() end end)
-AutoCarrotButton:SetScript("OnDragStop", AutoCarrotButton.StopMovingOrSizing)
-AutoCarrotButton:SetScript("OnClick", function()
+autoSpeedButton = CreateFrame("Button", "autoSpeedButton", UIParent, "ActionButtonTemplate")
+autoSpeedButton.icon:SetTexture(135788)
+autoSpeedButton:SetPoint("CENTER")
+autoSpeedButton.overlay = autoSpeedButton:CreateTexture(nil, "OVERLAY")
+autoSpeedButton.overlay:SetAllPoints(autoSpeedButton)
+autoSpeedButton:RegisterForDrag("LeftButton")
+autoSpeedButton:SetMovable(true)
+autoSpeedButton:SetUserPlaced(true)
+autoSpeedButton:SetScript("OnDragStart", function() if IsAltKeyDown() then autoSpeedButton:StartMoving() end end)
+autoSpeedButton:SetScript("OnDragStop", autoSpeedButton.StopMovingOrSizing)
+autoSpeedButton:SetScript("OnClick", function()
     if AutoCarrotDB.enabled then
-        AutoCarrotButton.overlay:SetColorTexture(1, 0, 0, 0.5)
+        autoSpeedButton.overlay:SetColorTexture(1, 0, 0, 0.5)
         AutoCarrotDB.enabled = false
         AutoCarrot_EquipNormalSet()
     else
-        AutoCarrotButton.overlay:SetColorTexture(0, 1, 0, 0.3)
+        autoSpeedButton.overlay:SetColorTexture(0, 1, 0, 0.3)
         AutoCarrotDB.enabled = true
     end
 end)
